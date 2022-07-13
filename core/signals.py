@@ -15,6 +15,6 @@ def createProfile(sender, instance, created, **kwargs):
         pass
 
 @receiver(post_delete, sender=Profile)
-def deleteProfile(sender, instance, created, **kwargs):
+def deleteProfile(sender, instance, **kwargs):
     user= instance.user
     user.delete()
