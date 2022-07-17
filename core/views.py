@@ -1,6 +1,6 @@
-from click import password_option
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
+from .models import Profile
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -40,10 +40,15 @@ def signup(request):
 
                 '''
                 user.save()
+                while not Profile.objects.get(user=user):
+                    continue #loop until profile instance isn't saved
+                login(request, authenticate(username=username,password=password))
+                return redirect('settings')
         else:
             messages.info(request, 'Passwords do not match')
             return redirect('signup')     
-    return render(request, 'signup.html')
+    else:
+        return render(request, 'signup.html')
 
 def signin(request):
     if request.method == 'POST':
@@ -64,4 +69,31 @@ def signin(request):
 def signout(request):
     logout(request)
     return redirect('signin')
+
+@login_required(login_url='signin')
+def settings(request):
+    user_profile = Profile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        image = None
+        bio = request.POST['bio']
+        location = request.POST['location']
+        
+        if request.FILES.get('image')== None:
+            image= user_profile.profileimg
+        else:
+            image = request.FILES.get('image')
+        
+        user_profile.profileimg =  image
+        user_profile.bio = bio
+        user_profile.location = location 
+
+        user_profile.save()
+
+        return redirect('settings')
+    return render(request, 'setting.html' , context={
+        'user_profile':user_profile,
+    })
+
+
 
