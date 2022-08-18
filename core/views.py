@@ -4,12 +4,14 @@ from .models import Profile, Post
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+import operator
+
 
 @login_required(login_url='signin')
 def index(request):
     user_object = User.objects.get(username =  request.user.username)
     user_profile = user_object.profile_set.get(user = user_object)
-    posts =  Post.objects.all()
+    posts =  Post.objects.order_by('-created_at')
     users = Profile.objects.all()
     return render(request, 'index.html', {'user_profile':user_profile, 'posts' : posts, 'users': users})
 
