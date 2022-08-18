@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Post
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -98,5 +98,18 @@ def settings(request):
         'user_profile':user_profile,
     })
 
-
-
+@login_required(login_url="signin")
+def upload(request):
+    if request.method == 'POST':
+        user =  Profile.objects.get(user=request.user)
+        image = None
+        caption = request.POST['caption']
+        if request.FILES.get('image_upload') == None:
+            return redirect('index')
+        else:
+            image = request.FILES.get('image_upload')
+        post =  Post.objects.create(user=user, image=image, caption=caption)
+        post.save()
+        return redirect('index')
+    else:
+        return redirect('index')
