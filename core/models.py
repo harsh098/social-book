@@ -16,7 +16,7 @@ class Profile(models.Model):
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    user = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     image = models.ImageField(upload_to = 'post-images')
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)

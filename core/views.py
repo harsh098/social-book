@@ -9,8 +9,9 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     user_object = User.objects.get(username =  request.user.username)
     user_profile = user_object.profile_set.get(user = user_object)
-    
-    return render(request, 'index.html', {'user_profile':user_profile})
+    posts =  Post.objects.all()
+    users = Profile.objects.all()
+    return render(request, 'index.html', {'user_profile':user_profile, 'posts' : posts, 'users': users})
 
 
 def signup(request):
@@ -31,16 +32,17 @@ def signup(request):
             else:
                 user=  User.objects.create_user(username=username, password=password, email=email)
                 '''
+                ------------------------------------------------------------------
                 Why prefer User.objects.create_user over User.objects.create ?
-
-                The most significant difference is that if you supply a password to the .create() method, it will be set verbatim on the user, 
+                ------------------------------------------------------------------
+                The most significant difference is that if you supply a password to the .create() method, 
+                it will be set verbatim on the user, 
                 and will not be usable to authenticate the user.
-
                 Instead, the create_user() method hashes the password argument
-
                 refer source: 
                 https://github.com/django/django/blob/main/django/contrib/auth/models.py#L145
 
+                ==================================================================
                 '''
                 user.save()
                 while not Profile.objects.get(user=user):
