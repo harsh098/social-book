@@ -8,4 +8,5 @@ urlpatterns = [
     path('logout', views.signout, name='logout'),
     path('settings', views.settings, name='settings'),
     path('upload', views.upload, name='upload'),
+    path('like_post/<str:post_id>', views.like_post, name='like_post')
 ]

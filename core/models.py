@@ -1,4 +1,5 @@
 from datetime import datetime
+from io import open_code
 import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -23,4 +24,18 @@ class Post(models.Model):
     no_of_likes = models.IntegerField(default = 0)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.id)
+
+class LikePost(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    like_usr = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    post_object =  models.ForeignKey(Post, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.id)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['like_usr','post_object'], name='likes_constraint')
+        ]
+    

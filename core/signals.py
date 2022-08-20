@@ -22,3 +22,18 @@ def createProfile(sender, instance, created, **kwargs):
 def deleteProfile(sender, instance, **kwargs):
     user= instance.user
     user.delete()
+
+@receiver(post_save, sender=LikePost)
+def incLikes(sender, instance, created, **kwargs):
+    if created:
+        like = instance
+        post = Post.objects.get(id=like.post_object.id)
+        post.no_of_likes += 1
+        post.save()
+
+@receiver(post_delete, sender=LikePost)
+def decLikes(sender, instance,  **kwargs):
+    like = instance
+    post = Post.objects.get(id=like.post_object.id)
+    post.no_of_likes -= 1
+    post.save()

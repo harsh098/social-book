@@ -1,6 +1,7 @@
+from django.db import IntegrityError
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
-from .models import Profile, Post
+from .models import LikePost, Profile, Post
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -117,3 +118,22 @@ def upload(request):
         return redirect('index')
     else:
         return redirect('index')
+
+@login_required(login_url='signin')
+def like_post(request, post_id):
+    like_user = Profile.objects.get(user = request.user)
+    post_id = Post.objects.get(id=post_id)
+    try:
+        #If post is not already liked
+        like_object =  LikePost.objects.create(post_object=post_id, like_usr= like_user)
+        like_object.save()
+    except IntegrityError:
+        #If post is already liked
+        like_object = LikePost.objects.get(post_object=post_id, like_usr= like_user)
+        like_object.delete()
+        
+    return redirect('index')
+
+def profile(request, profile_id):
+    pass
+    
