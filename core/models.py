@@ -1,10 +1,13 @@
 from datetime import datetime
+from email.policy import default
 from io import open_code
 import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
 User = get_user_model() #prefer over django.contrib.auth.models.User to add custom Authentication models for AUTH_USER_MODEL
 # Create your models here.
+
+
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     id_user = models.IntegerField()
@@ -38,4 +41,7 @@ class LikePost(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['like_usr','post_object'], name='likes_constraint')
         ]
-    
+
+
+
+
