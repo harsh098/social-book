@@ -13,9 +13,17 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     user_object = User.objects.get(username =  request.user.username)
     user_profile = user_object.profile_set.get(user = user_object)
-    posts =  Post.objects.order_by('-created_at')
-    users = Profile.objects.all()
-    return render(request, 'index.html', {'user_profile':user_profile, 'posts' : posts, 'users': users})
+    posts =  Post.objects.filter(user=user_profile)
+    users = []
+    for f_user in Followers.objects.filter(user=user_object):
+        users.append(f_user.follow_usr)
+    for user_obj in users:
+        posts= posts | (Post.objects.filter(user=user_obj))
+    posts =  posts.order_by('-created_at')
+    non_following_users = []
+    for nf_user_obj in Followers.objects.exclude(user=user_object):
+        non_following_users.append(nf_user_obj.user.profile_set.get(user=nf_user_obj.user))
+    return render(request, 'index.html', {'user_profile':user_profile, 'posts' : posts, 'nfusers': non_following_users})
 
 
 def signup(request):
