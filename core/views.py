@@ -135,6 +135,7 @@ def like_post(request, post_id):
         
     return redirect('index')
 
+
 def profile(request, pk):
     user = Profile.objects.get(id_user=pk)
     posts = user.post_set.all()
@@ -146,4 +147,21 @@ def profile(request, pk):
             follow_status=True
         
     return render(request, 'profile.html', context= {'user' : user, 'logged_in_user': logged_in_user , 'posts':posts, 'follow_status':follow_status, 'followers':followers})
+
+@login_required(login_url='signin')
+def follow_user(request, pk):
+    follow_usr = Profile.objects.get(id_user=pk)
+    user = User.objects.get(username = request.user.username)
+    # follow_object =  Followers.objects.create(user=user,follow_usr=follow_usr)
+    # follow_object.save()
+    print(user.username, ',', follow_usr)
+    try:
+        #If not followed
+        follow_object =  Followers.objects.create(user=user,follow_usr=follow_usr)
+        follow_object.save()
+    except IntegrityError:
+        #If already_followed
+        follow_object =  Followers.objects.get(user=user,follow_usr=follow_usr)
+        follow_object.delete()
     
+    return redirect(f'/profile/{pk}')

@@ -27,7 +27,7 @@
 	<section>
 			<div class="feature-photo">
 				<figure><img src="{% static 'images/resources/timeline-1.jpg' %}" alt=""></figure>
-				<form>
+				<div>
 					<div class="add-btn">
 					<span style="color: white; font-size: 27px; margin-right: 520px;"><b><u><a href="/">Home</a></u></b></span>
 					<span style="color: white; font-size: 27px;"><b>{{posts.count}}</b></span>
@@ -35,7 +35,7 @@
 					<span style="color: white; font-size: 27px;"><b>3.5k following</b></span>
 					
 					{% if not logged_in_user %}
-					<a href="" title="" data-ripple="">
+					<a href="{% url 'follow' user.id_user %}" >
 						<button style="background-color: #ffc0cb; border: #ffc0cb;">
 							{% if follow_status %}
 								Following
@@ -47,7 +47,7 @@
 					{% endif %}
 					
 					</div>
-				</form>
+				</div>
 
 				<!-- <form class="edit-phto">
 					<i class="fa fa-camera-retro"></i>
@@ -137,7 +137,7 @@
 									<ul class="photos">
 										{% for post in posts %}
 										<li>
-											<a class="strip" href="{{post.image.url}}" title="" data-strip-group="mygroup" data-strip-group-options="loop: false" alt="{{post.caption}}">
+											<a class="strip" href="{{post.image.url}}" title="" alt="{{post.caption}}">
 												<img src="{{post.image.url}}" style="height: 250px; width: 300px;" alt=""></a>
 										</li>
 										{% endfor %}
@@ -160,8 +160,8 @@
 
 	
 	
-	<script data-cfasync="false" src="https://cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="{% static 'js/main.min.js' %}"></script>
-	<script src="{% static 'js/script.js' %}"></script>
+	<!-- <script data-cfasync="false" src="https://cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="{% static 'js/main.min.js' %}"></script> -->
+	<!-- <script src="{% static 'js/script.js' %}"></script> -->
 
 </body>	
 
