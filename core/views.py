@@ -6,8 +6,7 @@ from .models import LikePost, Profile, Post, Followers
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
-
+from itertools import chain
 
 @login_required(login_url='signin')
 def index(request):
@@ -21,8 +20,13 @@ def index(request):
         posts= posts | (Post.objects.filter(user=user_obj))
     posts =  posts.order_by('-created_at')
     non_following_users = []
+
+    
     for nf_user_obj in Followers.objects.exclude(user=user_object):
-        non_following_users.append(nf_user_obj.user.profile_set.get(user=nf_user_obj.user))
+        nf_user_data = nf_user_obj.user.profile_set.get(user=nf_user_obj.user)
+        if_follow = Followers.objects.filter(user=user_object,follow_usr=nf_user_data)
+        if (nf_user_data not in non_following_users) and (not if_follow):
+            non_following_users.append(nf_user_data)
     return render(request, 'index.html', {'user_profile':user_profile, 'posts' : posts, 'nfusers': non_following_users})
 
 
@@ -162,7 +166,7 @@ def follow_user(request, pk):
     user = User.objects.get(username = request.user.username)
     # follow_object =  Followers.objects.create(user=user,follow_usr=follow_usr)
     # follow_object.save()
-    print(user.username, ',', follow_usr)
+    
     try:
         #If not followed
         follow_object =  Followers.objects.create(user=user,follow_usr=follow_usr)
@@ -173,3 +177,21 @@ def follow_user(request, pk):
         follow_object.delete()
     
     return redirect(f'/profile/{pk}')
+
+@login_required(login_url='signin')
+def search(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = user_object.profile_set.get(user = user_object)
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        usernames_object = User.objects.filter(username__icontains=username)
+
+        username_profile_list = []
+
+        for user_obj in usernames_object:
+            profile_lists = user_obj.profile_set.filter(user=user_obj)
+            username_profile_list.append(profile_lists)
+        
+        username_profile_list = list(chain(*username_profile_list))
+    return render(request, 'search.html', {'user_profile': user_profile, 'username_profile_list': username_profile_list})
