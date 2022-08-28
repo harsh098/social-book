@@ -32,7 +32,7 @@
 					<span style="color: white; font-size: 27px; margin-right: 520px;"><b><u><a href="/">Home</a></u></b></span>
 					<span style="color: white; font-size: 27px;"><b>{{posts.count}}</b></span>
 					<span style="color: white; font-size: 27px;"><b>{{followers}} followers</b></span>
-					<span style="color: white; font-size: 27px;"><b>3.5k following</b></span>
+					<span style="color: white; font-size: 27px;"><b>{{following}} following</b></span>
 					
 					{% if not logged_in_user %}
 					<a href="{% url 'follow' user.id_user %}" >
