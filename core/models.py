@@ -42,6 +42,16 @@ class LikePost(models.Model):
             models.UniqueConstraint(fields=['like_usr','post_object'], name='likes_constraint')
         ]
 
+class Followers(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    follow_usr = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
+    def __str__(self)->str:
+        return str(self.user)
+
+    class Meta:
+        constraints =[
+            models.UniqueConstraint(fields=['user', 'follow_usr'], name='followers_constraint')
+        ]
 
 

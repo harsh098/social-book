@@ -2,11 +2,11 @@ from django.db import IntegrityError
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from matplotlib.style import context
-from .models import LikePost, Profile, Post
+from .models import LikePost, Profile, Post, Followers
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-import operator
+
 
 
 @login_required(login_url='signin')
@@ -139,5 +139,10 @@ def profile(request, pk):
     user = Profile.objects.get(id_user=pk)
     posts = user.post_set.all()
     logged_in_user = (str(request.user) == str(user))
-    return render(request, 'profile.html', context= {'user' : user, 'logged_in_user': logged_in_user , 'posts':posts})
+    follow_status = None
+    if not logged_in_user:
+        if Followers.objects.filter(user=request.user, follow_usr=user).exists():
+            follow_status=True
+        
+    return render(request, 'profile.html', context= {'user' : user, 'logged_in_user': logged_in_user , 'posts':posts, 'follow_status':follow_status})
     
