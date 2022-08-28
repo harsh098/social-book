@@ -138,11 +138,12 @@ def like_post(request, post_id):
 def profile(request, pk):
     user = Profile.objects.get(id_user=pk)
     posts = user.post_set.all()
+    followers = Followers.objects.filter(follow_usr=user).count()
     logged_in_user = (str(request.user) == str(user))
     follow_status = None
     if not logged_in_user:
         if Followers.objects.filter(user=request.user, follow_usr=user).exists():
             follow_status=True
         
-    return render(request, 'profile.html', context= {'user' : user, 'logged_in_user': logged_in_user , 'posts':posts, 'follow_status':follow_status})
+    return render(request, 'profile.html', context= {'user' : user, 'logged_in_user': logged_in_user , 'posts':posts, 'follow_status':follow_status, 'followers':followers})
     
